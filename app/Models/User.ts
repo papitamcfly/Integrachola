@@ -3,6 +3,8 @@ import Hash from '@ioc:Adonis/Core/Hash'
 import { column, beforeSave, BaseModel, belongsTo, BelongsTo, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
 import Role from './Role'
 import TwoFactorCode from './TwoFactorCode'
+import Cuna from './Cuna'
+import Bebe from './Bebe'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -26,7 +28,10 @@ export default class User extends BaseModel {
   public phone:string
   @column({ serializeAs: null })
   public password: string
-
+  @hasMany(()=>Bebe)
+  public bebes: HasMany<typeof Bebe>
+  @hasMany(()=>Cuna)
+  public cunas: HasMany<typeof Cuna>
   @column()
   public rememberMeToken: string | null
   @hasMany(() => TwoFactorCode)
