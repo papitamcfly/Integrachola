@@ -5,7 +5,8 @@ export default class extends BaseSeeder {
   public async run () {
     await Role.createMany([
       {name:'admin',slug:'admin'},
-      {name:'support',slug:'support'}
+      {name:'support',slug:'support'},
+      {name:'user',slug:'user'}
     ])
   }
 }
