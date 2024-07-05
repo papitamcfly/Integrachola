@@ -51,9 +51,22 @@ public async showTicket({response,params}:HttpContextContract)
   const ticketId = params.id
   const ticket = Ticket.findOrFail(ticketId)
   if (!ticket) {
-    return response.status(404).json('bebe no encontrado')
+    return response.status(404).json('ticket no encontrado')
   }
   return response.status(200).json(ticket)
 }
-
+public async changeStatus({response,params}:HttpContextContract)
+{
+  const ticketId = params.id
+  const status = params.status
+  const ticket = await Ticket.find(ticketId)
+  if(!ticket){
+    return response.status(404).json('ticket no encontrado')
+  }
+  ticket.merge({
+    estado:status
+  })
+  ticket.save()
+  return response.status(200).json('estado actualizado correctamente')
+}
 }
