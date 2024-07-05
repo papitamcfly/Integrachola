@@ -20,8 +20,8 @@ export default class User extends BaseModel {
   public lastname:string
   @column()
   public age:number
-  @column()
-  public birthdate:Date
+  @column.dateTime()
+  public birthdate:DateTime
   @column()
   public active:boolean
   @column()

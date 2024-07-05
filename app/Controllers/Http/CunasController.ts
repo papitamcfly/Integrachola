@@ -77,7 +77,7 @@ export default class CunasController {
   }
 
   // Show specific 'Cuna'
-  public async show({ params, response }: HttpContextContract) {
+  public async showCuna({ params, response }: HttpContextContract) {
     const cuna = await Cuna.find(params.id)
     if (!cuna) {
       return response.status(404).json({ message: 'Cuna no encontrada' })

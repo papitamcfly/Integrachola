@@ -1,20 +1,66 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Verificacion2P from 'App/Mailers/Verificacion2P'
 import Role from 'App/Models/Role'
+import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import TwoFactorCode from 'App/Models/TwoFactorCode'
 import User from 'App/Models/User'
 import { DateTime } from 'luxon'
 
 export default class AuthController 
 {
-public async register({request,response}:HttpContextContract)
-{
-    const {email,password,phone,nickname,name,lastname,age,birthdate} = request.all()
-    const role = await Role.findByOrFail('slug','support')
-    const user = await User.create({email,password,phone,nickname,name,lastname,age,birthdate,roleId:role.id})
-    return response.json({user})
-
-}
+  public async register({ request, response }: HttpContextContract) {
+    const userSchema = schema.create({
+      email: schema.string({ trim: true }, [
+        rules.required(),
+        rules.email(),
+        rules.unique({ table: 'users', column: 'email' }),
+      ]),
+      password: schema.string({ trim: true }, [
+        rules.required(),
+        rules.minLength(6)
+      ]),
+      phone: schema.string({ trim: true }, [
+        rules.required(),
+        rules.minLength(10),
+        rules.maxLength(10),
+        rules.unique({ table: 'users', column: 'phone' }),
+      ]),
+      nickname: schema.string({ trim: true }, [
+        rules.required(),
+        rules.unique({ table: 'users', column: 'nickname' }),
+      ]),
+      name: schema.string({ trim: true }, [
+        rules.required()
+      ]),
+      lastname: schema.string({ trim: true }, [
+        rules.required()
+      ]),
+      birthdate: schema.date({format:'dd-MM-yyyy'}, [
+        rules.required()
+      ]),
+      age: schema.number([
+        rules.required()
+      ]),
+    })
+  
+    const payload = await request.validate({ schema: userSchema })
+  
+    const role = await Role.findByOrFail('slug', 'user')
+    const user = await User.create({
+      email: payload.email,
+      password: payload.password,
+      phone: payload.phone,
+      nickname: payload.nickname,
+      name: payload.name,
+      lastname: payload.lastname,
+      age: payload.age,
+      birthdate: payload.birthdate,
+      roleId: role.id,
+    })
+  
+    return response.json({ user })
+  }
+  
 public async login({ response,request, auth }: HttpContextContract) {
   const { uid, password } = request.all()
   await auth.use('api').attempt(uid, password)

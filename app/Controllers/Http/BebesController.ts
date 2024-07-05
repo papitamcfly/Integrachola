@@ -27,6 +27,7 @@ export default class BebesController
           bebe.merge({
             user_id: user?.id
           })
+          await bebe.save()
           return response.status(201).json({message:'bebe creado exitosamente'})
     }
     public async asignarbebe({ auth, response, request }: HttpContextContract) {
@@ -74,14 +75,23 @@ export default class BebesController
         cuna,
       })
     }
-    public async verbebes({response,auth}:HttpContextContract){
+    public async verBebes({response,auth}:HttpContextContract){
       const user = auth.user
       if (!user) {
         return response.status(401).json({ message: 'Usuario no autenticado' })
       }
   
-      const bebes = await Bebe.query().where('user', user.id).first()
+      const bebes = await Bebe.query().where('user_id', user.id).first()
       return response.status(200).json(bebes)
+    }
+    public async showBebe({response,params}:HttpContextContract)
+    {
+      const Bebeid = params.id
+      const bebe = Bebe.findOrFail(Bebeid)
+      if (!bebe) {
+        return response.status(404).json('bebe no encontrado')
+      }
+      return response.status(200).json(bebe)
     }
     public async updateBebe({request,response,params}:HttpContextContract)
     {

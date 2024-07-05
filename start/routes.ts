@@ -20,16 +20,33 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.get('/', async () => {
-  return { hello: 'world' }
-})
 Route.post('/register','AuthController.register')
 Route.post('/login','AuthController.login')
 Route.post('/verify','AuthController.verify')
 Route.post('/logout','AuthController.logout').middleware('auth:api')
 
 Route.get('/users','AuthController.index').middleware('auth:api')
-
+Route.post('/createTicket','TicketsController.createTicket').middleware(['auth:api','role:user,admin'])
+Route.get('/verTickets','TicketsController.verTickets').middleware(['auth:api','role:admin,support'])
+Route.get('/verTicketsPersonal','TicketsController.verTicketsPersonal').middleware(['auth:api','role:user'])
+Route.put('/cambiarStatus:estado','TicketsController.changeStatus').middleware(['auth:api','role:admin,support'])
+Route.get('/showTicket/:id','TicketsController.showTicket').middleware('auth:api')
+Route.put('/editTicket/:id','TicketsController.editTicket').middleware('auth:api')
+Route.delete('/deleteTicket/:id','TicketsController.deleteTicket').middleware('auth:api')
+Route.post('/createBebe','BebesController.createBebe').middleware(['auth:api','role:user'])
+Route.put('/asignarBebe','BebesController.asignarBebe').middleware(['auth:api','role:user'])
+Route.get('/verBebes','BebesController.verBebes').middleware(['auth:api','role:user'])
+Route.put('/updateBebe','BebesController.updateBebe').middleware(['auth:api','role:user'])
+Route.get('/showBebe/:id','BebesController.showBebe').middleware(['auth:api','role:user'])
+Route.post('/admincreate','CunasController.admincreate').middleware(['auth:api','role:admin'])
+Route.post('/userCreate','CunasController.userCreate').middleware(['auth:api','role:user'])
+Route.get('/AdminIndex','CunasController.AdminIndex').middleware(['auth:api','role:admin'])
+Route.get('/UserIndex','CunasController.UserIndex').middleware(['auth:api','role:user'])
+Route.get('/showCuna/:id','CunasController.showCuna').middleware(['auth:api','role:user'])
+Route.put('/userUpdate/:id','CunasController.userUpdate').middleware(['auth:api','role:user'])
+Route.put('/adminUpdate/:id','CunasController.adminUpdate').middleware(['auth:api','role:admin'])
+Route.delete('/AdminDestroy/:id','CunasController.AdminDestroy').middleware(['auth:api','role:admin'])
+Route.delete('/userDestroy/:id','CunasController.userDestroy').middleware(['auth:api','role:user'])
 Route.get('/admin',async({response})=>{
   return response.json({message:'eres administrador'})
 }).middleware(['auth:api','role:admin'])
