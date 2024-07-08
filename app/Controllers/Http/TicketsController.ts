@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Ticket from 'App/Models/Ticket'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
+import Ws from 'App/Services/Ws'
 export default class TicketsController 
 {
 public async verTickets({response}:HttpContextContract)
@@ -44,6 +45,8 @@ public async createTicket({auth,response,request}:HttpContextContract)
         user_id: user_id
       })
       ticket.save()
+      Ws.io.emit('newTicket', ticket) // emitir un eventillo
+
       return response.status(201).json(ticket)
 }
 public async showTicket({response,params}:HttpContextContract)
