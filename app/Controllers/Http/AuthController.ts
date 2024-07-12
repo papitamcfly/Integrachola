@@ -118,4 +118,11 @@ await new Verificacion2P(email,code).sendLater()
     }
   }
 
+  async test({ request, response }) {
+    const datos = request.body()
+    
+    console.log('JSON recibido:', JSON.stringify(datos, null, 2))
+    
+    return response.json({ mensaje: 'JSON recibido y procesado correctamente' })
+  }
 }
