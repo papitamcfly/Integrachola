@@ -55,3 +55,5 @@ Route.get('/admin',async({response})=>{
 Route.get('support',async({response})=>{
   return response.json({message:'eres support'})
 }).middleware(['auth:api','role:support'])
+
+Route.post('/test', 'AuthController.test')

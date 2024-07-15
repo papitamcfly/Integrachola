@@ -124,4 +124,12 @@ public async showUsers({response}:HttpContextContract){
   }
   return response.ok(users)
 }
+
+  async test({ request, response }) {
+    const datos = request.body()
+    
+    console.log('JSON recibido:', JSON.stringify(datos, null, 2))
+    
+    return response.json({ mensaje: 'JSON recibido y procesado correctamente' })
+  }
 }
