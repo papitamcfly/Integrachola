@@ -117,5 +117,11 @@ await new Verificacion2P(email,code).sendLater()
       return response.unauthorized('no se encotro token')
     }
   }
-
+public async showUsers({response}:HttpContextContract){
+  const users = await User.all()
+  if(!users){
+    return response.status(404).json({message: 'usuarios no encontrados'})
+  }
+  return response.ok(users)
+}
 }

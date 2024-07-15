@@ -25,7 +25,7 @@ Route.post('/login','AuthController.login')
 Route.post('/verify','AuthController.verify')
 Route.post('/logout','AuthController.logout').middleware('auth:api')
 
-Route.get('/users','AuthController.index').middleware('auth:api')
+Route.get('/users','AuthController.showUsers').middleware(['auth:api','role:admin'])
 Route.post('/createTicket','TicketsController.createTicket').middleware(['auth:api','role:user,admin'])
 Route.get('/verTickets','TicketsController.verTickets').middleware(['auth:api','role:admin,support'])
 Route.get('/verTicketsPersonal','TicketsController.verTicketsPersonal').middleware(['auth:api','role:user'])
@@ -47,6 +47,7 @@ Route.put('/userUpdate/:id','CunasController.userUpdate').middleware(['auth:api'
 Route.put('/adminUpdate/:id','CunasController.adminUpdate').middleware(['auth:api','role:admin'])
 Route.delete('/AdminDestroy/:id','CunasController.AdminDestroy').middleware(['auth:api','role:admin'])
 Route.delete('/userDestroy/:id','CunasController.userDestroy').middleware(['auth:api','role:user'])
+Route.get('/showCunasUser/:id','CunasController.showCunasUser').middleware(['auth:api','role:admin'])
 Route.get('/admin',async({response})=>{
   return response.json({message:'eres administrador'})
 }).middleware(['auth:api','role:admin'])

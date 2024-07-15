@@ -8,6 +8,14 @@ export default class CunasController {
     const cunas = await Cuna.all()
     return response.status(200).json(cunas)
   }
+  public async showCunasUser({params,response}:HttpContextContract)
+  {
+    const cunas = await Cuna.query().where('user',params.id)
+    if(!cunas){
+      return response.status(404).json({message:'no se encontraron cunas'})
+    }
+    return response.ok(cunas)
+  }
 
   // User: List user's 'Cunas'
   public async UserIndex({ auth, response }: HttpContextContract) {
