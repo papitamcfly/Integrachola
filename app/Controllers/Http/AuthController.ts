@@ -77,7 +77,7 @@ public async login({ response,request, auth }: HttpContextContract) {
   // Enviar código por correo electrónico o SMS (implementa esta función)
   await this.sendVerificationCode(user?.email, code)
 
-  return response.ok('correo enviado correctamente')
+  return response.ok({message:'correo enviado correctamente',email:user?.email})
 
 }
 
