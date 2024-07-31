@@ -81,7 +81,7 @@ export default class BebesController
         return response.status(401).json({ message: 'Usuario no autenticado' })
       }
   
-      const bebes = await Bebe.query().where('user_id', user.id).first()
+      const bebes = await Bebe.query().where('user_id', user.id)
       return response.status(200).json(bebes)
     }
 
