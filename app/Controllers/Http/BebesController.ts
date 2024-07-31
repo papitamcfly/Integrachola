@@ -84,15 +84,17 @@ export default class BebesController
       const bebes = await Bebe.query().where('user_id', user.id).first()
       return response.status(200).json(bebes)
     }
+
     public async showBebe({response,params}:HttpContextContract)
     {
       const Bebeid = params.id
-      const bebe = Bebe.findOrFail(Bebeid)
+      const bebe = await Bebe.find(Bebeid)
       if (!bebe) {
         return response.status(404).json('bebe no encontrado')
       }
       return response.status(200).json(bebe)
     }
+
     public async updateBebe({request,response,params}:HttpContextContract)
     {
       const updateBebeSchema = schema.create({

@@ -40,6 +40,7 @@ export default class CunasController {
     const createCunaSchema = schema.create({
         numserie: schema.string({ trim: true }, [
           rules.maxLength(5),
+          rules.unique({ table: 'cunas', column: 'numserie' }),
           rules.required()
         ]),
         
