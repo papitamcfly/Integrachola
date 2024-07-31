@@ -39,7 +39,7 @@ Route.get('/verBebes','BebesController.verBebes').middleware(['auth:api','role:u
 Route.put('/updateBebe','BebesController.updateBebe').middleware(['auth:api','role:user'])
 Route.get('/showBebe/:id','BebesController.showBebe').middleware(['auth:api','role:user'])
 Route.post('/admincreate','CunasController.admincreate').middleware(['auth:api','role:admin'])
-Route.post('/userCreate','CunasController.userCreate').middleware(['auth:api','role:user'])
+Route.post('/userCreate','CunasController.UserCreate').middleware(['auth:api','role:user'])
 Route.get('/AdminIndex','CunasController.AdminIndex').middleware(['auth:api','role:admin'])
 Route.get('/UserIndex','CunasController.UserIndex').middleware(['auth:api','role:user'])
 Route.get('/showCuna/:id','CunasController.showCuna').middleware(['auth:api','role:user'])

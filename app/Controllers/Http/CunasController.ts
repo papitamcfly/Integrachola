@@ -24,8 +24,14 @@ export default class CunasController {
       return response.status(401).json({ message: 'Usuario no autenticado' })
     }
 
-    const cunas = await Cuna.query().where('user', user.id).first()
-    return response.status(200).json(cunas)
+    const cunas = await Cuna.query()
+      .where('user_id', user.id)
+      .preload('users')
+      .preload('bebes')
+
+    return response.status(200).json({
+      cunas
+    })
   }
 
   // Admin: Create 'Cuna'
@@ -51,7 +57,7 @@ export default class CunasController {
   }
 
   // User: Create 'Cuna' with nickname
-  public async UserCreate({ request, response, auth, params }: HttpContextContract) {
+  public async UserCreate({ request, response, auth }: HttpContextContract) {
     const createCunaSchema = schema.create({
         apodo: schema.string({ trim: true }, [
           rules.minLength(1),
@@ -62,11 +68,10 @@ export default class CunasController {
             rules.required()
           ])
       })
-    const { numero_serie } = params
 
       const payload = await request.validate({ schema: createCunaSchema })
-
-    const cuna = await Cuna.query().where('numserie', numero_serie).first()
+console.log(payload)
+    const cuna = await Cuna.query().where('numserie', payload.numserie).first()
     if (!cuna) {
       return response.status(404).json({ message: 'Cuna no encontrada' })
     }
@@ -160,5 +165,14 @@ export default class CunasController {
     await cuna.save()
 
     return response.status(200).json({ message: 'Cuna desactivada correctamente' })
+  }
+  public async showCunasWithoutBebe({ response, auth }: HttpContextContract) {
+    const user = await auth.use('api').authenticate()
+    
+    const cunas = await Cuna.query()
+      .where('user_id', user.id)
+      .whereNull('bebe_id')
+    
+    return response.status(200).json(cunas)
   }
 }
