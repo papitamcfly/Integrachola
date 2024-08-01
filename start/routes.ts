@@ -36,7 +36,7 @@ Route.delete('/deleteTicket/:id','TicketsController.deleteTicket').middleware('a
 Route.post('/createBebe','BebesController.createBebe').middleware(['auth:api','role:user'])
 Route.put('/asignarBebe','BebesController.asignarBebe').middleware(['auth:api','role:user'])
 Route.get('/verBebes','BebesController.verBebes').middleware(['auth:api','role:user'])
-Route.put('/updateBebe','BebesController.updateBebe').middleware(['auth:api','role:user'])
+Route.put('/updateBebe/:id','BebesController.updateBebe').middleware(['auth:api','role:user'])
 Route.get('/showBebe/:id','BebesController.showBebe').middleware(['auth:api','role:user'])
 Route.post('/admincreate','CunasController.admincreate').middleware(['auth:api','role:admin'])
 Route.post('/userCreate','CunasController.UserCreate').middleware(['auth:api','role:user'])
@@ -48,6 +48,8 @@ Route.put('/adminUpdate/:id','CunasController.adminUpdate').middleware(['auth:ap
 Route.delete('/AdminDestroy/:id','CunasController.AdminDestroy').middleware(['auth:api','role:admin'])
 Route.delete('/userDestroy/:id','CunasController.userDestroy').middleware(['auth:api','role:user'])
 Route.get('/showCunasUser/:id','CunasController.showCunasUser').middleware(['auth:api','role:admin'])
+Route.get('/showCunasWithoutBebe','CunasController.showCunasWithoutBebe').middleware(['auth:api'])
+
 Route.get('/admin',async({response})=>{
   return response.json({message:'eres administrador'})
 }).middleware(['auth:api','role:admin'])
