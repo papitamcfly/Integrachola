@@ -6,7 +6,7 @@ export default class TicketsController
 {
 public async verTickets({response}:HttpContextContract)
 {
-    const tickets = Ticket.all()
+    const tickets = Ticket.query().preload('users')
     return response.ok(tickets)
 }
 public async verTicketsPersonal({auth,response}:HttpContextContract)
@@ -16,7 +16,7 @@ public async verTicketsPersonal({auth,response}:HttpContextContract)
         {
             return response.unauthorized('usuario no autentificado')
         }
-        const tickets = await Ticket.query().where('user_id', user.id).first()
+        const tickets = await Ticket.query().where('user_id', user.id)
         return response.status(200).json(tickets)
 }
 

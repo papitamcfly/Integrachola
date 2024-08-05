@@ -71,7 +71,6 @@ export default class CunasController {
       })
 
       const payload = await request.validate({ schema: createCunaSchema })
-console.log(payload)
     const cuna = await Cuna.query().where('numserie', payload.numserie).first()
     if (!cuna) {
       return response.status(404).json({ message: 'Cuna no encontrada' })
