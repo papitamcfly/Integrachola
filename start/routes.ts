@@ -64,3 +64,9 @@ Route.post('getAllData', 'SensoresController.getAllData').middleware('auth:api')
 Route.post('getRecentData', 'SensoresController.getRecentData').middleware('auth:api')
 Route.post('getOneData', 'SensoresController.getOneData').middleware('auth:api')
 
+Route.get('/adminUsers', 'UsersController.index').middleware(['auth:api','role:admin'])
+Route.get('/adminUsers/:id', 'UsersController.show').middleware(['auth:api','role:admin'])
+Route.post('/registerAdmin', 'UsersController.store').middleware(['auth:api','role:admin'])
+Route.put('/updateAdmin/:id', 'UsersController.update').middleware(['auth:api','role:admin'])
+Route.delete('/deleteAdmin/:id', 'UsersController.destroy').middleware(['auth:api','role:admin'])
+
