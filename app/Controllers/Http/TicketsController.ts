@@ -52,7 +52,7 @@ public async createTicket({auth,response,request}:HttpContextContract)
 public async showTicket({response,params}:HttpContextContract)
 {
   const ticketId = params.id
-  const ticket = Ticket.findOrFail(ticketId)
+  const ticket = await Ticket.findOrFail(ticketId)
   if (!ticket) {
     return response.status(404).json('ticket no encontrado')
   }
