@@ -58,4 +58,9 @@ Route.get('support',async({response})=>{
   return response.json({message:'eres support'})
 }).middleware(['auth:api','role:support'])
 
-Route.post('/test', 'AuthController.test')
+
+Route.post('sendNumber', 'SensoresController.sendToRaspberry').middleware('auth:api')
+Route.post('getAllData', 'SensoresController.getAllData').middleware('auth:api')
+Route.post('getRecentData', 'SensoresController.getRecentData').middleware('auth:api')
+Route.post('getOneData', 'SensoresController.getOneData').middleware('auth:api')
+
