@@ -72,4 +72,34 @@ public async changeStatus({response,params}:HttpContextContract)
   ticket.save()
   return response.status(200).json('estado actualizado correctamente')
 }
+
+public async editTicket({auth,response,request,params}:HttpContextContract)
+{
+    const user = auth.user
+    const ticketId = params.id
+    if(!user)
+    {
+        return response.unauthorized('usuario no autentificado')
+    }
+    const createCunaSchema = schema.create({
+        descripcion: schema.string({ trim: true }, [
+          rules.minLength(1),
+          rules.required()
+        ]),
+        asunto: schema.string({trim:true},[
+            rules.minLength(1),
+            rules.required()
+        ])
+      })
+      const payload = await request.validate({schema:createCunaSchema})
+      const ticket = await Ticket.findOrFail(ticketId)
+      ticket.merge({
+        descripcion: payload.descripcion,
+        asunto: payload.asunto,
+        estado: 'en espera',
+      })
+      await ticket.save()
+
+      return response.status(200).json(ticket)
+}
 }

@@ -121,5 +121,6 @@ export default class BebesController
         apellidos: payload.apellidos,
         sexo: payload.sexo,
       })
+      bebe.save()
     }
 }
