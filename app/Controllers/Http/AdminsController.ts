@@ -42,7 +42,7 @@ export default class UsersController {
 
     const payload = await request.validate({ schema: userSchema })
 
-    const role = await Role.findByOrFail('name', 'admin')
+    const role = await Role.findByOrFail('admin', 'admin')
     const user = await User.create({
       email: payload.email,
       password: payload.password,
