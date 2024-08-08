@@ -42,7 +42,7 @@ Route.post('/admincreate','CunasController.admincreate').middleware(['auth:api',
 Route.post('/userCreate','CunasController.UserCreate').middleware(['auth:api','role:user'])
 Route.get('/AdminIndex','CunasController.AdminIndex').middleware(['auth:api','role:admin'])
 Route.get('/UserIndex','CunasController.UserIndex').middleware(['auth:api','role:user'])
-Route.get('/showCuna/:id','CunasController.showCuna').middleware(['auth:api','role:user'])
+Route.get('/showCuna/:id','CunasController.showCuna').middleware(['auth:api','role:user,admin'])
 Route.put('/userUpdate/:id','CunasController.userUpdate').middleware(['auth:api','role:user'])
 Route.put('/adminUpdate/:id','CunasController.adminUpdate').middleware(['auth:api','role:admin'])
 Route.delete('/AdminDestroy/:id','CunasController.AdminDestroy').middleware(['auth:api','role:admin'])
