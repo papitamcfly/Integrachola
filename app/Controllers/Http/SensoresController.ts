@@ -45,6 +45,34 @@ export default class SensoresController {
         }
     }
 
+    public async startCycle({ auth, response, request }: HttpContextContract) {
+        try {
+          const user = auth.user;
+          const cuna = await Cuna.query()
+            .where('user_id', user!.id)
+            .where('id', request.input('cuna_id'))
+            .firstOrFail();
+      
+          const datosCuna = await this.devices.find({ deviceID: cuna.numserie }).toArray();
+          let url = datosCuna[0].url;
+      
+          // Asegurar de que la URL tenga el esquema http:// o https://
+          if (!/^https?:\/\//i.test(url)) {
+            url = 'http://' + url;
+          }
+      
+          await axios.post(`${url}/api/start/`, {}, {
+            timeout: 5000  // Timeout de 5 segundos
+          });
+      
+          return response.status(200).json({ message: 'Datos enviados correctamente' });
+        } catch (error) {
+          if (error.code === 'ECONNABORTED') {
+            return response.status(408).json({ message: 'La solicitud ha expirado' });
+          }
+        }
+    }
+
     public async getAllData({ auth, response, request }: HttpContextContract) {
         const user = auth.user
         const cuna = await Cuna.query()

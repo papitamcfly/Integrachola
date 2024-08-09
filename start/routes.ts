@@ -60,6 +60,7 @@ Route.get('support',async({response})=>{
 
 
 Route.post('sendNumber', 'SensoresController.sendToRaspberry').middleware('auth:api')
+Route.post('startCycle', 'SensoresController.startCycle').middleware('auth:api')
 Route.post('getAllData', 'SensoresController.getAllData').middleware('auth:api')
 Route.post('getRecentData', 'SensoresController.getRecentData').middleware('auth:api')
 Route.post('getOneData', 'SensoresController.getOneData').middleware('auth:api')
