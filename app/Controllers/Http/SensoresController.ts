@@ -74,15 +74,25 @@ export default class SensoresController {
     }
 
     public async getAllData({ auth, response, request }: HttpContextContract) {
-        const user = auth.user
-        const cuna = await Cuna.query()
-            .where('user_id', user!.id)
-            .where('id', request.input('cuna_id'))
-            .firstOrFail()
-        
-        const datosCuna = await this.datosSensores.find({ "infoSensor.deviceID": cuna.numserie }).toArray()
-
-        return response.status(200).json(datosCuna)
+      try {
+          const user = auth.user;
+          const cuna = await Cuna.query()
+              .where('user_id', user!.id)
+              .where('id', request.input('cuna_id'))
+              .firstOrFail();
+  
+          // Realiza la agregación utilizando $unwind y $sort
+          const datosOrdenados = await this.datosSensores.aggregate([
+              { "$match": { "infoSensor.deviceID": cuna.numserie } }, // Filtra por deviceID
+              { "$unwind": "$infoSensor.data" }, // Desanida el array data
+              { "$sort": { "infoSensor.data.datetime": -1 } }, // Ordena por datetime descendente
+          ]).toArray();
+  
+          return response.status(200).json(datosOrdenados);
+      } catch (error) {
+          console.error(error);
+          return response.status(500).json({ message: 'Error obteniendo todos los datos', error: error.message });
+      }
     }
 
     public async getOneData({ auth, response, request }: HttpContextContract) {
