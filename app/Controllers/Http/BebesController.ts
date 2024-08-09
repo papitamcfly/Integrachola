@@ -30,7 +30,7 @@ export default class BebesController
           await bebe.save()
           return response.status(201).json({message:'bebe creado exitosamente'})
     }
-    public async asignarbebe({ auth, response, request }: HttpContextContract) {
+    public async asignarBebe({ auth, response, request }: HttpContextContract) {
       const user = auth.user
     
       if (!user) {
