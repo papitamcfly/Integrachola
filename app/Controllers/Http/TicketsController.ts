@@ -6,7 +6,7 @@ export default class TicketsController
 {
 public async verTickets({response}:HttpContextContract)
 {
-    const tickets = Ticket.query().preload('users')
+    const tickets = await Ticket.query().preload('users')
     return response.ok(tickets)
 }
 public async verTicketsPersonal({auth,response}:HttpContextContract)
