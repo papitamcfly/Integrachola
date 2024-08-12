@@ -122,5 +122,6 @@ export default class BebesController
         sexo: payload.sexo,
       })
       bebe.save()
+      return response.status(200).json(bebe)
     }
 }
