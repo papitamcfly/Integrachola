@@ -58,19 +58,28 @@ public async showTicket({response,params}:HttpContextContract)
   }
   return response.status(200).json(ticket)
 }
-public async changeStatus({response,params}:HttpContextContract)
-{
+public async changeStatus({response, params}: HttpContextContract) {
   const ticketId = params.id
   const status = params.status
+
+  // Validar el estado
+  const validStatuses = ['en espera', 'revision', 'concluida']
+  if (!validStatuses.includes(status)) {
+    return response.status(400).json({ error: 'Estado no válido' })
+  }
+
   const ticket = await Ticket.find(ticketId)
   if(!ticket){
-    return response.status(404).json('ticket no encontrado')
+    return response.status(404).json({ error: 'Ticket no encontrado' })
   }
-  ticket.merge({
-    estado:status
-  })
-  ticket.save()
-  return response.status(200).json('estado actualizado correctamente')
+  ticket.merge({ estado: status })
+  await ticket.save()
+  
+  // Cargar la relación con el usuario
+  await ticket.load('users')
+  
+  Ws.io.emit('statusChanged', ticket)
+  return response.status(200).json(ticket)
 }
 
 public async editTicket({auth,response,request,params}:HttpContextContract)
