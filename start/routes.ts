@@ -49,6 +49,11 @@ Route.delete('/AdminDestroy/:id','CunasController.AdminDestroy').middleware(['au
 Route.delete('/userDestroy/:id','CunasController.userDestroy').middleware(['auth:api'])
 Route.get('/showCunasUser/:id','CunasController.showCunasUser').middleware(['auth:api','role:admin'])
 Route.get('/showCunasWithoutBebe','CunasController.showCunasWithoutBebe').middleware(['auth:api'])
+Route.post('/createAdmins', 'AdminsController.store').middleware(['auth:api','role:admin'])
+Route.get('/showAdmins', 'AdminsController.index').middleware(['auth:api','role:admin'])
+Route.get('/showAdmins/:id', 'AdminsController.show').middleware(['auth:api','role:admin'])
+Route.put('/updateAdmins/:id', 'AdminsController.update').middleware(['auth:api','role:admin'])
+Route.delete('/deleteAdmins/:id', 'AdminsController.destroy').middleware(['auth:api','role:admin'])
 
 Route.get('/admin',async({response})=>{
   return response.json({message:'eres administrador'})
