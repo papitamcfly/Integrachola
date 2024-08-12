@@ -9,56 +9,77 @@ import { DateTime } from 'luxon'
 export default class AuthController 
 {
   public async register({ request, response }: HttpContextContract) {
-    const userSchema = schema.create({
-      email: schema.string({ trim: true }, [
-        rules.required(),
-        rules.email(),
-        rules.unique({ table: 'users', column: 'email' }),
-      ]),
-      password: schema.string({ trim: true }, [
-        rules.required(),
-        rules.minLength(6)
-      ]),
-      phone: schema.string({ trim: true }, [
-        rules.required(),
-        rules.minLength(10),
-        rules.maxLength(10),
-        rules.unique({ table: 'users', column: 'phone' }),
-      ]),
-      nickname: schema.string({ trim: true }, [
-        rules.required(),
-        rules.unique({ table: 'users', column: 'nickname' }),
-      ]),
-      name: schema.string({ trim: true }, [
-        rules.required()
-      ]),
-      lastname: schema.string({ trim: true }, [
-        rules.required()
-      ]),
-      birthdate: schema.date({format:'dd-MM-yyyy'}, [
-        rules.required()
-      ]),
-      age: schema.number([
-        rules.required()
-      ]),
-    })
-  
-    const payload = await request.validate({ schema: userSchema })
-  
-    const role = await Role.findByOrFail('slug', 'user')
-    const user = await User.create({
-      email: payload.email,
-      password: payload.password,
-      phone: payload.phone,
-      nickname: payload.nickname,
-      name: payload.name,
-      lastname: payload.lastname,
-      age: payload.age,
-      birthdate: payload.birthdate,
-      roleId: role.id,
-    })
-  
-    return response.json({ user })
+    try {
+      const userSchema = schema.create({
+        email: schema.string({ trim: true }, [
+          rules.required(),
+          rules.email(),
+          rules.unique({ table: 'users', column: 'email' }),
+        ]),
+        password: schema.string({ trim: true }, [
+          rules.required(),
+          rules.minLength(6)
+        ]),
+        phone: schema.string({ trim: true }, [
+          rules.required(),
+          rules.minLength(10),
+          rules.maxLength(10),
+          rules.unique({ table: 'users', column: 'phone' }),
+        ]),
+        nickname: schema.string({ trim: true }, [
+          rules.required(),
+          rules.unique({ table: 'users', column: 'nickname' }),
+        ]),
+        name: schema.string({ trim: true }, [
+          rules.required()
+        ]),
+        lastname: schema.string({ trim: true }, [
+          rules.required()
+        ]),
+        birthdate: schema.date({ format: 'dd-MM-yyyy' }, [
+          rules.required()
+        ]),
+        age: schema.number([
+          rules.required()
+        ]),
+      })
+
+      // Validar los datos del usuario
+      const payload = await request.validate({ schema: userSchema })
+
+      // Buscar el rol de usuario por el slug 'user'
+      const role = await Role.findByOrFail('slug', 'user')
+
+      // Crear un nuevo usuario
+      const user = await User.create({
+        email: payload.email,
+        password: payload.password,
+        phone: payload.phone,
+        nickname: payload.nickname,
+        name: payload.name,
+        lastname: payload.lastname,
+        age: payload.age,
+        birthdate: payload.birthdate,
+        roleId: role.id,
+      })
+
+      return response.status(201).json({ user })
+
+    } catch (error) {
+      // Si hay un error de validación, envía una respuesta con el error
+      if (error.messages) {
+        return response.status(422).json({
+          message: 'Error de validación',
+          errors: error.messages.errors,
+        })
+      }
+
+      // Otros errores no esperados
+      return response.status(500).json({
+        message: 'Error interno del servidor',
+        error: error.message,
+      })
+    }
   }
   
 public async login({ response,request, auth }: HttpContextContract) {
