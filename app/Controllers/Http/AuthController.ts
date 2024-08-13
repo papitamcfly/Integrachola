@@ -122,7 +122,7 @@ public async verify({ request, auth }: HttpContextContract) {
   // Generar token de API
   const token = await auth.use('api').generate(user)
 
-  return { token: token.token }
+  return { token: token.token , user:user}
 }
 
 private async sendVerificationCode(email: any, code: string) {

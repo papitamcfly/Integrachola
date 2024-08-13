@@ -2,6 +2,7 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import axios from 'axios'
 import Cuna from 'App/Models/Cuna'
 import { MongoClient } from 'mongodb'
+import Ws from 'App/Services/Ws'
 const MongoClient = require('mongodb').MongoClient
 
 export default class SensoresController {
@@ -191,5 +192,9 @@ export default class SensoresController {
             console.error(error)
             return response.status(500).json({ message: 'Error obteniendo datos recientes', error: error.message })
         }
+    }
+    public async sendpeticion()
+    {
+      Ws.io.emit('sensores')
     }
 }

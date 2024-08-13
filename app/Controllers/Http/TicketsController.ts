@@ -70,6 +70,7 @@ public async changeStatus({response,params}:HttpContextContract)
     estado:status
   })
   ticket.save()
+  Ws.io.emit('newTicket', ticket) // emitir un eventillo
   return response.status(200).json('estado actualizado correctamente')
 }
 
