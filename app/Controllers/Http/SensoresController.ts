@@ -193,6 +193,48 @@ export default class SensoresController {
             return response.status(500).json({ message: 'Error obteniendo datos recientes', error: error.message })
         }
     }
+
+    public async getAllAdminData({ response }: HttpContextContract) {
+      try {
+        var cuna = await Cuna.all()
+        const datosCunas: any[] = []
+        for (let i = 0; i < cuna.length; i++) {
+          const datosOrdenados = await this.datosSensores.aggregate([
+            { "$match": { "infoSensor.deviceID": cuna[i].numserie } }, // Filtra por deviceID
+            { "$unwind": "$infoSensor.data" }, // Desanida el array data
+            { "$sort": { "infoSensor.data.datetime": -1 } }, // Ordena por datetime descendente
+          ]).toArray();
+          datosCunas[i] = datosOrdenados
+        }
+        return response.status(200).json(datosCunas);
+      }
+      catch (error) {
+        console.error(error)
+        return response.status(500).json({ message: 'Error obteniendo todos los datos', error: error.message })
+      }
+    }
+      
+    public async getDataDate({response, request}: HttpContextContract){
+      const fecha = request.input('fecha')
+      console.log(fecha)
+      try {
+        var cuna = await Cuna.all()
+        const datosCunas: any[] = []
+        for (let i = 0; i < cuna.length; i++) {
+          const datosOrdenados = await this.datosSensores.aggregate([
+            { "$match": { "infoSensor.deviceID": cuna[i].numserie } }, // Filtra por deviceID
+            { "$unwind": "$infoSensor.data" }, // Desanida el array data
+            { "$sort": { "infoSensor.data.datetime": fecha } }, // Ordena por datetime descendente
+            ]).toArray();
+          datosCunas[i] = datosOrdenados
+        }
+        return response.status(200).json(datosCunas);
+      }
+      catch (error) {
+        console.error(error)
+        return response.status(500).json({ message: 'Error obteniendo todos los datos', error: error.message })
+      }
+    }
     public async sendpeticion()
     {
       Ws.io.emit('sensores')
