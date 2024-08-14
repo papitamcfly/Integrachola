@@ -197,14 +197,14 @@ export default class SensoresController {
     public async getAllAdminData({ response }: HttpContextContract) {
       try {
         var cuna = await Cuna.all()
-        const datosCunas: any[] = []
+        const datosCunas: any = {}
         for (let i = 0; i < cuna.length; i++) {
           const datosOrdenados = await this.datosSensores.aggregate([
             { "$match": { "infoSensor.deviceID": cuna[i].numserie } }, // Filtra por deviceID
             { "$unwind": "$infoSensor.data" }, // Desanida el array data
             { "$sort": { "infoSensor.data.datetime": -1 } }, // Ordena por datetime descendente
           ]).toArray();
-          datosCunas[i] = datosOrdenados
+          datosCunas[cuna[i].numserie] = datosOrdenados
         }
         return response.status(200).json(datosCunas);
       }
@@ -214,19 +214,46 @@ export default class SensoresController {
       }
     }
       
-    public async getDataDate({response, request}: HttpContextContract){
-      const fecha = request.input('fecha')
-      console.log(fecha)
+    public async getAllDataDate({response, request}: HttpContextContract){
+      const { fechaInicio, fechaFin } = request.all()
+      console.log(fechaInicio, fechaFin)
       try {
         var cuna = await Cuna.all()
-        const datosCunas: any[] = []
+        const datosCunas: any = {}
         for (let i = 0; i < cuna.length; i++) {
           const datosOrdenados = await this.datosSensores.aggregate([
-            { "$match": { "infoSensor.deviceID": cuna[i].numserie } }, // Filtra por deviceID
-            { "$unwind": "$infoSensor.data" }, // Desanida el array data
-            { "$sort": { "infoSensor.data.datetime": fecha } }, // Ordena por datetime descendente
+            { "$match": { "infoSensor.deviceID": cuna[i].numserie,
+              "infoSensor.data.datetime": {"$gte":new Date(fechaInicio), "$lt": new Date(fechaFin)} } },
+            { "$unwind": "$infoSensor.data" },
+            { "$sort": { "infoSensor.data.datetime": -1 } },
             ]).toArray();
-          datosCunas[i] = datosOrdenados
+          datosCunas[cuna[i].numserie] = datosOrdenados
+        }
+        return response.status(200).json(datosCunas);
+      }
+      catch (error) {
+        console.error(error)
+        return response.status(500).json({ message: 'Error obteniendo todos los datos', error: error.message })
+      }
+    }
+    public async getSingleDataDate({response, request}: HttpContextContract){
+      const { fechaInicio, fechaFin } = request.all()
+      console.log(fechaInicio, fechaFin)
+      try {
+        var cuna = await Cuna.all()
+        const datosCunas: any = {}
+        for (let i = 0; i < cuna.length; i++) {
+          const datosOrdenados = await this.datosSensores.aggregate([
+            { "$match": { 
+                "infoSensor.deviceID": cuna[i].numserie,
+                "infoSensor.data.datetime": {"$gte":new Date(fechaInicio), "$lt": new Date(fechaFin)},
+                "infoSensor.IdSensor": request.input('sensorId')
+              }},
+            { "$unwind": "$infoSensor.data" },
+            { "$sort": { "infoSensor.data.datetime": -1 } },
+            { "$limit": 1}
+            ]).toArray();
+          datosCunas[cuna[i].numserie] = datosOrdenados
         }
         return response.status(200).json(datosCunas);
       }
