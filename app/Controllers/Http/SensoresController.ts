@@ -262,6 +262,25 @@ export default class SensoresController {
         return response.status(500).json({ message: 'Error obteniendo todos los datos', error: error.message })
       }
     }
+
+    public async getDataByCuna({response, request}: HttpContextContract){
+      const { fechaInicio, fechaFin, cunaId } = request.all()
+      try {
+        var cuna = await Cuna.find(cunaId)
+        const datosOrdenados = await this.datosSensores.aggregate([
+          { "$match": { "infoSensor.deviceID": cuna!.numserie,
+            "infoSensor.data.datetime": {"$gte":new Date(fechaInicio), "$lt": new Date(fechaFin)} } },
+          { "$unwind": "$infoSensor.data" },
+          { "$sort": { "infoSensor.data.datetime": -1 } },
+          ]).toArray();
+        return response.status(200).json(datosOrdenados);
+      }
+      catch (error) {
+        console.error(error)
+        return response.status(500).json({ message: 'Error obteniendo todos los datos', error: error.message })
+      }
+    }
+
     public async sendpeticion()
     {
       Ws.io.emit('sensores')
