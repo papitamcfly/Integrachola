@@ -16,6 +16,15 @@ export default class CunasController {
     }
     return response.ok(cunas)
   }
+  public async showCuna({response,params}:HttpContextContract)
+  {
+    const Bebeid = params.id
+    const bebe = await Cuna.find(Bebeid)
+    if (!bebe) {
+      return response.status(404).json('Cuna no encontrado')
+    }
+    return response.status(200).json(bebe)
+  }
 
   // User: List user's 'Cunas'
   public async UserIndex({ auth, response }: HttpContextContract) {

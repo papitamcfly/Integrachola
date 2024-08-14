@@ -285,4 +285,5 @@ export default class SensoresController {
     {
       Ws.io.emit('sensores')
     }
+
 }
