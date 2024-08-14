@@ -281,6 +281,33 @@ export default class SensoresController {
       }
     }
 
+    public async getHighValuesByDate({response, request}){
+      const {fechaInicio, fechaFin, cunaId, sensorId} = request.all()
+      try{
+        var cuna = await Cuna.find(cunaId)
+        const datosOrdenados = await this.datosSensores.aggregate([
+          { "$match": {
+              "infoSensor.IdSensor" :sensorId,
+              "infoSensor.deviceID": cuna!.numserie,
+              "infoSensor.data.datetime": {"$gte":new Date(fechaInicio), "$lt": new Date(fechaFin)} 
+            } },
+          {}, 
+          { "$unwind": "$infoSensor.data" },
+          { "$sort": { "infoSensor.data.datetime": -1 } },
+          ]).toArray();
+      }
+      catch (error) {
+        console.error(error)
+        return response.status(500).json({ message: 'Error obteniendo todos los datos', error: error.message })
+      }
+    }
+
+    public async getValues(Sensor:string){
+      switch(Sensor){
+        
+      }
+    }
+
     public async sendpeticion()
     {
       Ws.io.emit('sensores')
