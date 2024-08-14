@@ -59,44 +59,49 @@ export default class CunasController {
 
   // User: Create 'Cuna' with nickname
   public async UserCreate({ request, response, auth }: HttpContextContract) {
+    // Define el esquema de validación
     const createCunaSchema = schema.create({
-        apodo: schema.string({ trim: true }, [
-          rules.minLength(1),
-          rules.required()
-        ]),
-        numserie: schema.string({ trim: true }, [
-            rules.maxLength(5),
-            rules.required()
-          ])
-      })
+      apodo: schema.string({ trim: true }, [
+        rules.minLength(1),
+        rules.required()
+      ]),
+      numserie: schema.string({ trim: true }, [
+        rules.maxLength(5),
+        rules.required()
+      ])
+    })
 
-      const payload = await request.validate({ schema: createCunaSchema })
+    // Valida la solicitud
+    const payload = await request.validate({ schema: createCunaSchema })
+
+    // Busca la cuna por su número de serie
     const cuna = await Cuna.query().where('numserie', payload.numserie).first()
+
+    // Si no encuentra la cuna, devuelve un error 404
     if (!cuna) {
       return response.status(404).json({ message: 'Cuna no encontrada' })
     }
 
+    // Verifica si la cuna ya tiene un user_id asignado
+    if (cuna.user_id) {
+      return response.status(404).json({ message: 'La cuna ya está registrada con otro usuario' })
+    }
+
+    // Obtén el usuario autenticado
     const user = auth.user
 
+    // Actualiza los datos de la cuna
     cuna.merge({
       apodo: payload.apodo,
       active: true,
       user_id: user?.id
     })
 
+    // Guarda los cambios en la base de datos
     await cuna.save()
 
-    return response.status(200).json({ message: 'cuna agregada correctamente', data: cuna })
-  }
-
-  // Show specific 'Cuna'
-  public async showCuna({ params, response }: HttpContextContract) {
-    const cuna = await Cuna.find(params.id)
-    if (!cuna) {
-      return response.status(404).json({ message: 'Cuna no encontrada' })
-    }
-
-    return response.status(200).json(cuna)
+    // Devuelve una respuesta exitosa
+    return response.status(200).json({ message: 'Cuna agregada correctamente', data: cuna })
   }
 
   // User: Update 'Cuna'
