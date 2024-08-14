@@ -295,6 +295,8 @@ export default class SensoresController {
           { "$unwind": "$infoSensor.data" },
           { "$sort": { "infoSensor.data.datetime": -1 } },
           ]).toArray();
+
+          return response.status(200).json(datosOrdenados);
       }
       catch (error) {
         console.error(error)
@@ -304,7 +306,7 @@ export default class SensoresController {
 
     public async getValues(Sensor:string){
       switch(Sensor){
-        
+
       }
     }
 
