@@ -17,7 +17,7 @@ export default class SensoresController {
         this.client.connect();
         this.db = this.client.db('cunas');
         this.devices = this.db.collection('devices');
-        this.datosSensores = this.db.collection('Data');
+        this.datosSensores = this.db.collection('Data2');
     }
 
     public async sendToRaspberry({ auth, response, request }: HttpContextContract) {
