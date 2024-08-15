@@ -190,6 +190,7 @@ export default class SensoresController {
             return response.status(200).json(recentData)
         } catch (error) {
             console.error(error)
+            console.log()
             return response.status(500).json({ message: 'Error obteniendo datos recientes', error: error.message })
         }
     }
