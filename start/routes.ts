@@ -74,6 +74,9 @@ Route.get('getAllAdminData', 'SensoresController.getAllAdminData').middleware(['
 Route.post('getAllDataDate', 'SensoresController.getAllDataDate').middleware(['auth:api','role:admin'])
 Route.post('getSingleDataDate', 'SensoresController.getSingleDataDate').middleware(['auth:api','role:admin'])
 Route.post('getDataByCuna', 'SensoresController.getDataByCuna').middleware('auth:api')
+
+Route.post('getHighValues', 'SensoresController.getHighValuesByDate')
+
 Route.post('sendevento','SensoresController.sendpeticion')
 
 Route.get('/adminUsers', 'UsersController.index').middleware(['auth:api','role:admin'])

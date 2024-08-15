@@ -281,32 +281,54 @@ export default class SensoresController {
       }
     }
 
-    public async getHighValuesByDate({response, request}){
-      const {fechaInicio, fechaFin, cunaId, sensorId} = request.all()
-      try{
-        var cuna = await Cuna.find(cunaId)
+    public async getHighValuesByDate({ response, request }) {
+      const { fechaInicio, fechaFin, cunaId, sensorId } = request.all();
+      try {
+        const cuna = await Cuna.find(cunaId);
+        if (!cuna) {
+          return response.status(404).json({ message: 'Cuna no encontrada' });
+        }
+    
+        const normalValues = await this.getValues(sensorId);
+    
         const datosOrdenados = await this.datosSensores.aggregate([
-          { "$match": {
-              "infoSensor.IdSensor" :sensorId,
-              "infoSensor.deviceID": cuna!.numserie,
-              "infoSensor.data.datetime": {"$gte":new Date(fechaInicio), "$lt": new Date(fechaFin)} 
-            } },
-          {}, 
+          {
+            "$match": {
+              "infoSensor.IdSensor": sensorId,
+              "infoSensor.deviceID": cuna.numserie,
+              "infoSensor.data.datetime": { "$gte": new Date(fechaInicio), "$lt": new Date(fechaFin) }
+            }
+          },
           { "$unwind": "$infoSensor.data" },
           { "$sort": { "infoSensor.data.datetime": -1 } },
-          ]).toArray();
-
-          return response.status(200).json(datosOrdenados);
+          {
+            "$match": {
+              "infoSensor.data.data": { "$ne": normalValues }
+            }
+          },
+          {
+            "$group": {
+              "_id": null,
+              "count": { "$sum": 1 }
+            }
+          }
+        ]).toArray();
+    
+        return response.status(200).json({ count: datosOrdenados.length > 0 ? datosOrdenados[0].count : 0 });
+      } catch (error) {
+        console.error(error);
+        return response.status(500).json({ message: 'Error obteniendo los datos', error: error.message });
       }
-      catch (error) {
-        console.error(error)
-        return response.status(500).json({ message: 'Error obteniendo todos los datos', error: error.message })
-      }
-    }
+    }    
 
     public async getValues(Sensor:string){
       switch(Sensor){
-
+        case 'SRC':
+          return "Normal"
+        case 'MQ':
+          return 'Bajo'
+        default:
+          throw new Error(`Sensor no reconocido: ${Sensor}`);
       }
     }
 
