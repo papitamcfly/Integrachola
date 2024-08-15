@@ -206,7 +206,7 @@ export default class SensoresController {
           ]).toArray();
           datosCunas[cuna[i].numserie] = datosOrdenados
         }
-        Ws.io.emit('sensores')
+        Ws.io.emit('sensores1')
         return response.status(200).json(datosCunas);
       }
       catch (error) {
