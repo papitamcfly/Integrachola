@@ -285,14 +285,17 @@ export default class SensoresController {
 
     public async getHighValuesByDate({ response, request }) {
       const { fechaInicio, fechaFin, cunaId, sensorId } = request.all();
+    
       try {
+        // Asegúrate de que `sensorId` se está enviando correctamente
+        console.log('sensorId:', sensorId);
+    
         const cuna = await Cuna.find(cunaId);
         if (!cuna) {
           return response.status(404).json({ message: 'Cuna no encontrada' });
         }
     
         const normalValues = await this.getValues(sensorId);
-    
         const datosOrdenados = await this.datosSensores.aggregate([
           {
             "$match": {
@@ -308,15 +311,15 @@ export default class SensoresController {
               "infoSensor.data.data": { "$ne": normalValues }
             }
           },
-          
         ]).toArray();
     
-        return response.status(200).json( datosOrdenados );
+        return response.status(200).json(datosOrdenados);
       } catch (error) {
         console.error(error);
         return response.status(500).json({ message: 'Error obteniendo los datos', error: error.message });
       }
-    }    
+    }
+     
 
     public async getValues(Sensor:string){
       switch(Sensor){
