@@ -333,7 +333,7 @@ export default class SensoresController {
     }
 
     public async getBabyData({response, request}) {
-      const {bebeId} = request.call()
+      const {bebeId} = request.all()
     
       try {
         var bebe = await Cuna.query().where('bebe_id', bebeId).first()
