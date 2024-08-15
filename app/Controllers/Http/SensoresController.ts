@@ -287,8 +287,7 @@ export default class SensoresController {
       const { fechaInicio, fechaFin, cunaId, sensorId } = request.all();
     
       try {
-        // Asegúrate de que `sensorId` se está enviando correctamente
-        console.log('sensorId:', sensorId);
+
     
         const cuna = await Cuna.find(cunaId);
         if (!cuna) {
