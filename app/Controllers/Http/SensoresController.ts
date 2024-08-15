@@ -307,15 +307,10 @@ export default class SensoresController {
               "infoSensor.data.data": { "$ne": normalValues }
             }
           },
-          {
-            "$group": {
-              "_id": null,
-              "count": { "$sum": 1 }
-            }
-          }
+          
         ]).toArray();
     
-        return response.status(200).json({ count: datosOrdenados.length > 0 ? datosOrdenados[0].count : 0 });
+        return response.status(200).json( datosOrdenados );
       } catch (error) {
         console.error(error);
         return response.status(500).json({ message: 'Error obteniendo los datos', error: error.message });
