@@ -76,6 +76,7 @@ Route.post('getSingleDataDate', 'SensoresController.getSingleDataDate').middlewa
 Route.post('getDataByCuna', 'SensoresController.getDataByCuna').middleware('auth:api')
 
 Route.post('getHighValues', 'SensoresController.getHighValuesByDate')
+Route.post('getBabyData', 'SensoresController.getBabyData')
 
 Route.post('sendevento','SensoresController.sendpeticion')
 

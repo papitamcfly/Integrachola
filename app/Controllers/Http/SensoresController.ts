@@ -332,6 +332,29 @@ export default class SensoresController {
       }
     }
 
+    public async getBabyData({response, request}) {
+      const {bebeId} = request.call()
+    
+      try {
+        var bebe = await Cuna.query().where('bebe_id', bebeId).first()
+        if (!bebe) {
+          return response.status(404).json({ message: 'Bebé no encontrado' })
+        }
+        var data = await this.datosSensores.find({ "infoSensor.deviceID": bebe.numserie }).toArray()
+
+        if (data.length === 0) {
+          return response.status(404).json({ message: 'No se encontraron datos del sensor para este bebé' })
+        }
+    
+        return response.status(200).json(data)
+      } catch (error) {
+        
+        console.error('Error al obtener los datos del bebé:', error)
+        return response.status(500).json({ message: 'Ocurrió un error al obtener los datos del bebé', error: error.message })
+      }
+    }
+    
+
     public async sendpeticion()
     {
       Ws.io.emit('sensores')
